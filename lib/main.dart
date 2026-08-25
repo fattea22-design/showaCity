@@ -1,122 +1,148 @@
 import 'package:flutter/material.dart';
+import 'domain/city_game.dart';
+import 'domain/game_domain.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+    title: '昭和から令和の街',
+    theme: ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
+    ),
+    home: const CityHome(),
+  );
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class CityHome extends StatefulWidget {
+  const CityHome({super.key});
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CityHome> createState() => _CityHomeState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class _CityHomeState extends State<CityHome> {
+  final game = CityGame();
+  int? selectedX;
+  int? selectedY;
 
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: Text('${game.era.name.toUpperCase()} 街づくり'),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text('🪙 ${game.save.coins}  💎 ${game.save.gems}'),
         ),
+      ],
+    ),
+    body: SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final city = _cityGrid();
+          final panel = _panel();
+          return constraints.maxWidth >= 600
+              ? Row(
+                  children: [
+                    Expanded(child: city),
+                    SizedBox(width: 300, child: panel),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Expanded(child: city),
+                    SizedBox(height: 190, child: panel),
+                  ],
+                );
+        },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    ),
+    bottomNavigationBar: NavigationBar(
+      destinations: const [
+        NavigationDestination(icon: Icon(Icons.home), label: '街'),
+        NavigationDestination(icon: Icon(Icons.flag), label: 'ミッション'),
+        NavigationDestination(icon: Icon(Icons.store), label: 'ショップ'),
+      ],
+    ),
+  );
+
+  Widget _cityGrid() => InteractiveViewer(
+    minScale: .7,
+    maxScale: 2.5,
+    child: Center(
+      child: GridView.builder(
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(20),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: CityGame.width,
+        ),
+        itemCount: CityGame.width * CityGame.height,
+        itemBuilder: (context, index) {
+          final x = index % CityGame.width;
+          final y = index ~/ CityGame.width;
+          final building = game.save.buildings
+              .where((value) => value['x'] == x && value['y'] == y)
+              .firstOrNull;
+          return GestureDetector(
+            onTap: () => setState(() {
+              selectedX = x;
+              selectedY = y;
+            }),
+            child: Card(
+              color: selectedX == x && selectedY == y
+                  ? Colors.amber.shade200
+                  : Colors.green.shade100,
+              child: Center(
+                child: Text(
+                  building?['id'] as String? ?? '空地',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+
+  Widget _panel() => Padding(
+    padding: const EdgeInsets.all(10),
+    child: ListView(
+      children: [
+        Text('人口 ${game.population} / 時給 ${game.incomePerHour}'),
+        Wrap(
+          spacing: 4,
+          children: CityGame.buildings
+              .map(
+                (building) => ElevatedButton(
+                  onPressed: selectedX == null
+                      ? null
+                      : () => setState(
+                          () => game.place(building, selectedX!, selectedY!),
+                        ),
+                  child: Text(building.id),
+                ),
+              )
+              .toList(),
+        ),
+        ElevatedButton(
+          onPressed: selectedX == null
+              ? null
+              : () => setState(() => game.upgrade(selectedX!, selectedY!)),
+          child: const Text('選択建物を強化'),
+        ),
+        ElevatedButton(
+          onPressed: () => setState(() => game.collectIdle(DateTime.now())),
+          child: const Text('放置収益を回収'),
+        ),
+        if (game.era != Era.reiwa)
+          ElevatedButton(
+            onPressed: () => setState(game.advanceEra),
+            child: const Text('次の時代へ'),
+          ),
+      ],
+    ),
+  );
 }
