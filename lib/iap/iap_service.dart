@@ -42,8 +42,7 @@ class IapCatalog {
 }
 
 class IapService {
-  IapService(this.repository, {GameSave save = const GameSave()})
-    : _save = save;
+  IapService(this.repository, {GameSave this._save = const GameSave()});
   final IapRepository repository;
   GameSave _save;
   GameSave get save => _save;
@@ -69,12 +68,14 @@ class IapService {
 
   PurchaseResult _apply(PurchaseResult result, String productId) {
     if (result.state != PurchaseState.purchased &&
-        result.state != PurchaseState.restored)
+        result.state != PurchaseState.restored) {
       return result;
+    }
     final transactionId = result.transactionId;
     if (transactionId == null ||
-        _save.processedTransactions.contains(transactionId))
+        _save.processedTransactions.contains(transactionId)) {
       return result;
+    }
     final consumable =
         productId == IapCatalog.smallGems ||
         productId == IapCatalog.mediumGems ||
