@@ -9,5 +9,5 @@
 - Support URL: 未確定
 - Privacy Policy URL: 未確定
 - Bundle ID: 未確定
-- IAP Product IDs: `com.hashi.showa_city.gems.small`, `com.hashi.showa_city.gems.medium`, `com.hashi.showa_city.gems.large`, `com.hashi.showa_city.permanent.boost`, `com.hashi.showa_city.retro.landmark`
+- IAP Product IDs: `com.hashi.showaCity.gems.small`, `com.hashi.showaCity.gems.medium`, `com.hashi.showaCity.gems.large`, `com.hashi.showaCity.permanent.boost`, `com.hashi.showaCity.retro.landmark`
 - Review notes: 購入は街画面のショップから。復元はショップの復元導線から。消耗型はジェム、非消耗型は永久特典または外観を付与する。

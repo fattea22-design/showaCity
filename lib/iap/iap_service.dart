@@ -27,11 +27,12 @@ abstract interface class IapRepository {
 }
 
 class IapCatalog {
-  static const smallGems = 'com.hashi.showa_city.gems.small';
-  static const mediumGems = 'com.hashi.showa_city.gems.medium';
-  static const largeGems = 'com.hashi.showa_city.gems.large';
-  static const permanentBoost = 'com.hashi.showa_city.permanent.boost';
-  static const retroLandmark = 'com.hashi.showa_city.retro.landmark';
+  static const bundleId = 'com.hashi.showaCity';
+  static const smallGems = '$bundleId.gems.small';
+  static const mediumGems = '$bundleId.gems.medium';
+  static const largeGems = '$bundleId.gems.large';
+  static const permanentBoost = '$bundleId.permanent.boost';
+  static const retroLandmark = '$bundleId.retro.landmark';
   static const all = [
     smallGems,
     mediumGems,
