@@ -66,8 +66,11 @@ class CityGame {
       y < height &&
       !_save.buildings.any((b) => b['x'] == x && b['y'] == y);
   bool place(BuildingDefinition d, int x, int y) {
-    if (!canPlace(x, y) || d.era.index > era.index || _save.coins < d.baseCost)
+    if (!canPlace(x, y) ||
+        d.era.index > era.index ||
+        _save.coins < d.baseCost) {
       return false;
+    }
     final item = {
       'id': d.id,
       'x': x,
@@ -147,8 +150,9 @@ class CityGame {
     final next = era.index + 1;
     if (next >= Era.values.length ||
         population < (next == 1 ? 30 : 100) ||
-        _save.missions.isEmpty)
+        _save.missions.isEmpty) {
       return false;
+    }
     _save = GameSave(
       coins: _save.coins,
       gems: _save.gems,

@@ -65,15 +65,17 @@ class GameSave {
 
   factory GameSave.decode(String value) {
     final decoded = jsonDecode(value);
-    if (decoded is! Map<String, dynamic>)
+    if (decoded is! Map<String, dynamic>) {
       throw const FormatException('Save root must be an object');
+    }
     return migrate(decoded);
   }
 
   static GameSave migrate(Map<String, dynamic> json) {
     final version = _int(json['schemaVersion'], 0);
-    if (version > currentSchemaVersion)
+    if (version > currentSchemaVersion) {
       throw const FormatException('Unsupported save version');
+    }
     final migrated = Map<String, dynamic>.from(json);
     migrated['schemaVersion'] = currentSchemaVersion;
     migrated['processedTransactions'] ??= <String>[];
