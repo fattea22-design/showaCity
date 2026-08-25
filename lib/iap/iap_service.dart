@@ -42,7 +42,7 @@ class IapCatalog {
 }
 
 class IapService {
-  IapService(this.repository, {GameSave this._save = const GameSave()});
+  IapService(this.repository, {this._save = const GameSave()});
   final IapRepository repository;
   GameSave _save;
   GameSave get save => _save;
