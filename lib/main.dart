@@ -147,6 +147,7 @@ class _CityHomeState extends State<CityHome> {
                           ),
                   ),
                 ),
+              ),
             );
           },
         ),
