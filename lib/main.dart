@@ -41,12 +41,14 @@ class _CityHomeState extends State<CityHome> {
     appBar: AppBar(
       title: Text('${_eraLabel(game.era)}の町づくり'),
       actions: [
-        _resourceChip(
-          Icons.monetization_on,
-          '${game.save.coins}',
-          Colors.amber,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text('🪙${game.save.coins}'),
         ),
-        _resourceChip(Icons.diamond, '${game.save.gems}', Colors.blue),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text('💎${game.save.gems}'),
+        ),
         const SizedBox(width: 8),
       ],
     ),
