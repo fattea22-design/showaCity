@@ -39,7 +39,7 @@ class _CityHomeState extends State<CityHome> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('${_eraLabel(game.era)}の町'),
+      title: Text('${_eraLabel(game.era)}の町づくり'),
       actions: [
         _resourceChip(
           Icons.monetization_on,
