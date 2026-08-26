@@ -161,6 +161,10 @@ class _CityHomeState extends State<CityHome> {
     padding: const EdgeInsets.all(10),
     child: ListView(
       children: [
+        const Text(
+          '街づくり',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         Row(
           children: [
             Expanded(
