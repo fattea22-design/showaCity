@@ -3,6 +3,20 @@ import 'game_save.dart';
 
 class CityGame {
   CityGame({GameSave? save}) : _save = save ?? const GameSave();
+
+  factory CityGame.newGame() {
+    final game = CityGame(
+      save: GameSave(
+        coins: 600,
+        gems: 25,
+        missions: const ['welcome'],
+        lastActiveAt: DateTime.now(),
+      ),
+    );
+    game.placeStarter('nagaya', 1, 1);
+    game.placeStarter('dagashiya', 2, 1);
+    return game;
+  }
   GameSave _save;
   final economy = const EconomyCalculator(BalanceConfig());
   final idle = const IdleIncomeCalculator();
@@ -51,6 +65,31 @@ class CityGame {
     ),
   ];
   GameSave get save => _save;
+
+  void placeStarter(String id, int x, int y) {
+    final d = buildings.firstWhere((building) => building.id == id);
+    final item = {
+      'id': d.id,
+      'x': x,
+      'y': y,
+      'level': 1,
+      'income': economy.incomePerHour(d, 1),
+      'population': economy.population(d, 1),
+    };
+    _save = GameSave(
+      coins: _save.coins - d.baseCost,
+      gems: _save.gems,
+      buildings: [..._save.buildings, item],
+      era: _save.era,
+      missions: _save.missions,
+      achievements: _save.achievements,
+      historyPoints: _save.historyPoints,
+      lastActiveAt: _save.lastActiveAt,
+      processedTransactions: _save.processedTransactions,
+      entitlements: _save.entitlements,
+    );
+  }
+
   Era get era => Era.values.firstWhere(
     (e) => e.name == _save.era,
     orElse: () => Era.showa,

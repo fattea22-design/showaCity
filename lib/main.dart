@@ -23,9 +23,10 @@ class CityHome extends StatefulWidget {
 }
 
 class _CityHomeState extends State<CityHome> {
-  final game = CityGame();
+  final game = CityGame.newGame();
   int? selectedX;
   int? selectedY;
+  int page = 0;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -41,7 +42,7 @@ class _CityHomeState extends State<CityHome> {
     body: SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final city = _cityGrid();
+          final city = page == 0 ? _cityGrid() : _secondaryPage();
           final panel = _panel();
           return constraints.maxWidth >= 600
               ? Row(
@@ -60,6 +61,8 @@ class _CityHomeState extends State<CityHome> {
       ),
     ),
     bottomNavigationBar: NavigationBar(
+      selectedIndex: page,
+      onDestinationSelected: (index) => setState(() => page = index),
       destinations: const [
         NavigationDestination(icon: Icon(Icons.home), label: '街'),
         NavigationDestination(icon: Icon(Icons.flag), label: 'ミッション'),
@@ -96,7 +99,9 @@ class _CityHomeState extends State<CityHome> {
                   : Colors.green.shade100,
               child: Center(
                 child: Text(
-                  building?['id'] as String? ?? '空地',
+                  building == null
+                      ? '空き地'
+                      : '${_buildingLabel(building['id'] as String)}\n(${building['id']})',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -111,10 +116,14 @@ class _CityHomeState extends State<CityHome> {
     padding: const EdgeInsets.all(10),
     child: ListView(
       children: [
-        Text('人口 ${game.population} / 時給 ${game.incomePerHour}'),
+        Text('人口 ${game.population}  ・  毎時 ${game.incomePerHour}コイン'),
+        Text(
+          selectedX == null ? '街の区画をタップして建物を選択' : '選択中: ${selectedX! + 1}区画目',
+        ),
         Wrap(
           spacing: 4,
           children: CityGame.buildings
+              .where((building) => building.era.index <= game.era.index)
               .map(
                 (building) => ElevatedButton(
                   onPressed: selectedX == null
@@ -122,7 +131,14 @@ class _CityHomeState extends State<CityHome> {
                       : () => setState(
                           () => game.place(building, selectedX!, selectedY!),
                         ),
-                  child: Text(building.id),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_buildingLabel(building.id)),
+                      Text(building.id),
+                      Text('${building.baseCost}🪙'),
+                    ],
+                  ),
                 ),
               )
               .toList(),
@@ -145,4 +161,46 @@ class _CityHomeState extends State<CityHome> {
       ],
     ),
   );
+
+  Widget _secondaryPage() => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: page == 1
+          ? const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.flag, size: 56, color: Colors.orange),
+                SizedBox(height: 12),
+                Text(
+                  'ミッション',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text('最初の建物を建てよう  ✓\n街を少しずつ大きくしよう'),
+              ],
+            )
+          : const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.store, size: 56, color: Colors.orange),
+                SizedBox(height: 12),
+                Text(
+                  'ショップ',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text('ジェム 25個\n購入機能はApp Store接続時に利用できます'),
+              ],
+            ),
+    ),
+  );
+
+  String _buildingLabel(String id) => switch (id) {
+    'nagaya' => '長屋',
+    'dagashiya' => '駄菓子屋',
+    'kissa' => '喫茶店',
+    'karaoke' => 'カラオケ',
+    'tower' => '高層住宅',
+    _ => id,
+  };
 }
