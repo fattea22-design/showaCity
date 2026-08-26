@@ -111,8 +111,10 @@ class IapService {
 class MockIapRepository implements IapRepository {
   MockIapRepository({
     this.nextPurchase = const PurchaseResult(PurchaseState.canceled),
+    this.restoreResults = const [],
   });
   final PurchaseResult nextPurchase;
+  final List<PurchaseResult> restoreResults;
   @override
   Future<List<StoreProduct>> products(List<String> ids) async => ids
       .map(
@@ -126,5 +128,5 @@ class MockIapRepository implements IapRepository {
   @override
   Future<PurchaseResult> purchase(String productId) async => nextPurchase;
   @override
-  Future<List<PurchaseResult>> restore() async => const [];
+  Future<List<PurchaseResult>> restore() async => restoreResults;
 }

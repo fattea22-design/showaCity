@@ -50,4 +50,22 @@ void main() {
       expect(service.save.gems, 0);
     }
   });
+
+  test(
+    'restore returns restored events without regranting consumables',
+    () async {
+      final repository = MockIapRepository(
+        restoreResults: const [
+          PurchaseResult(PurchaseState.restored, transactionId: 'tx-old'),
+        ],
+      );
+      final service = IapService(
+        repository,
+        save: const GameSave(gems: 100, processedTransactions: ['tx-old']),
+      );
+      final results = await service.restore();
+      expect(results.single.state, PurchaseState.restored);
+      expect(service.save.gems, 100);
+    },
+  );
 }
