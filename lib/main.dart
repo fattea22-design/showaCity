@@ -267,14 +267,6 @@ class _CityHomeState extends State<CityHome> {
     _ => id,
   };
 
-  Widget _resourceChip(IconData icon, String value, Color color) => Padding(
-    padding: const EdgeInsets.only(right: 6),
-    child: Chip(
-      avatar: Icon(icon, size: 18, color: color),
-      label: Text(value),
-    ),
-  );
-
   Widget _statCard(IconData icon, String label, String value) => Card(
     color: Colors.white,
     child: Padding(
